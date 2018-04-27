@@ -16,7 +16,12 @@
 - 按照提示输入即可得到结果。
 - 日期格式不要打错了。
 
-
+1. 单双周制，偶数上班
+> ![github](https://github.com/HYY-yu/WeekPuzzles/blob/master/img/1_y.png)  
+2. 单双周制，奇数上班
+> ![github](https://github.com/HYY-yu/WeekPuzzles/blob/master/img/1_n.png)  
+3. 大小周制
+> ![github](https://github.com/HYY-yu/WeekPuzzles/blob/master/img/2_y.png)  
 
 
 ### Bugs
