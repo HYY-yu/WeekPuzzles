@@ -10,13 +10,13 @@ import (
 	"log"
 )
 
-func ApiToServer(sa *saturday.Saturday) {
-	apiUrl := "http://lanfly.vicp.io/api/holiday/info/$date"
+func ApiToServer(saturdays saturday.Saturdays) {
+	apiUrl := "http://lanfly.vicp.io/api/holiday/batch?d=$date"
 
 	client := &http.Client{
 	}
 
-	newDate := sa.Date[:4] + "-" + sa.Date[4:6] + "-" + sa.Date[6:]
+	newDate, dateMap := getDateStringAndMap(saturdays)
 
 	apiUrl = strings.Replace(apiUrl, "$date", newDate, -1)
 	u, _ := url.Parse(apiUrl)
@@ -45,11 +45,27 @@ func ApiToServer(sa *saturday.Saturday) {
 		return
 	}
 
-	holidayExist := respJson.Get("holiday.holiday").Exists()
-	if holidayExist {
-		holiday := respJson.Get("holiday.holiday").Bool()
-		sa.Low = !holiday
-		sa.Relax = holiday
+	for k, v := range dateMap {
+		pathStr := "holiday." + k
+		holi := respJson.Get(pathStr)
+		holidayExist := holi.IsObject()
+		if holidayExist {
+			holiday := holi.Get("holiday").Bool()
+			saturdays[v].Low = !holiday
+			saturdays[v].Relax = holiday
+		}
 	}
 	return
+}
+
+func getDateStringAndMap(sas saturday.Saturdays) (string, map[string]int) {
+	temp := make([]string, 0, len(sas))
+	tempMap := make(map[string]int)
+
+	for i, sa := range sas {
+		date := sa.Date[:4] + "-" + sa.Date[4:6] + "-" + sa.Date[6:]
+		temp = append(temp, date)
+		tempMap[date] = i
+	}
+	return strings.Join(temp, ","), tempMap
 }

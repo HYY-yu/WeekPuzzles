@@ -3,7 +3,6 @@ package main
 import (
 	"time"
 	sa "WeekPuzzles/saturday"
-	"WeekPuzzles/helper"
 	"math"
 	"strconv"
 	"fmt"
@@ -17,8 +16,8 @@ var WorkWeekNow bool
 func main() {
 A:
 	for {
-		startDate := helper.ParseTime("20180101")
-		endDate := helper.ParseTime("20181231")
+		startDate := ParseTime("20180101")
+		endDate := ParseTime("20181231")
 
 		fmt.Println("输入1选择单双周制，输入2选择大小周制：")
 		var isOE int
@@ -50,8 +49,8 @@ A:
 				continue
 			}
 
-			startDate = helper.ParseTime(dateRange + "0101")
-			endDate = helper.ParseTime(dateRange + "1231")
+			startDate = ParseTime(dateRange + "0101")
+			endDate = ParseTime(dateRange + "1231")
 		}
 
 		if len(dateRange) == 17 {
@@ -78,8 +77,8 @@ A:
 					continue
 				}
 			}
-			startDate = helper.ParseTime(dates[0])
-			endDate = helper.ParseTime(dates[1])
+			startDate = ParseTime(dates[0])
+			endDate = ParseTime(dates[1])
 		}
 
 		fmt.Println("本周要上班吗？(y/n)")
@@ -104,8 +103,8 @@ A:
 		}
 
 		fmt.Println("查询中...")
-		saturdays.Each(api.ApiToServer)
-		fmt.Printf("在 %s 到 %s 间： \n", startDate.Format(helper.TIME_PATTERN), endDate.Format(helper.TIME_PATTERN))
+		api.ApiToServer(saturdays)
+		fmt.Printf("在 %s 到 %s 间： \n", startDate.Format(TIME_PATTERN), endDate.Format(TIME_PATTERN))
 		saturdays.Println()
 		break A
 	}
@@ -118,11 +117,11 @@ func oddAndEvenWeek(sa *sa.Saturday) {
 		return
 	}
 
-	now := float64(helper.FindNowSaturday().Day())
-	useEven := helper.XOR(helper.IsEven(now), WorkWeekNow)
+	now := float64(FindNowSaturday().Day())
+	useEven := XOR(IsEven(now), WorkWeekNow)
 
 	day, _ := strconv.ParseFloat(sa.Date[6:], 64)
-	sa.Work = helper.XOR(helper.IsEven(day), useEven)
+	sa.Work = XOR(IsEven(day), useEven)
 }
 
 // 大小周判断： 把星期分为 工作周和休息周 两种，先看看本周是否是工作周。
@@ -133,16 +132,16 @@ func bigAndSmallWeek(sa *sa.Saturday) {
 		return
 	}
 
-	stime := helper.ParseTime(sa.Date)
-	ntime := helper.FindNowSaturday()
+	stime := ParseTime(sa.Date)
+	ntime := FindNowSaturday()
 	detaDay := ntime.Sub(stime).Hours() / 24 / 7
 
-	sa.Work = helper.XOR(math.Mod(detaDay, 2)/2 == 0, WorkWeekNow)
+	sa.Work = XOR(math.Mod(detaDay, 2)/2 == 0, WorkWeekNow)
 }
 
 func calculateAllSaturday(startDate, endDate time.Time) sa.Saturdays {
 	result := make(sa.Saturdays, 0)
-	recentSaturday := helper.FindRecentSaturday(startDate) //开始日期以后最近的一个星期六的日期
+	recentSaturday := FindRecentSaturday(startDate) //开始日期以后最近的一个星期六的日期
 	currentTime := recentSaturday
 
 	for {
@@ -151,9 +150,9 @@ func calculateAllSaturday(startDate, endDate time.Time) sa.Saturdays {
 		}
 
 		s := sa.Saturday{
-			Date: currentTime.Format(helper.TIME_PATTERN),
+			Date: currentTime.Format(TIME_PATTERN),
 			Work: false,
-			Now:  helper.IsNowWeek(currentTime),
+			Now:  IsNowWeek(currentTime),
 		}
 
 		result = append(result, s)

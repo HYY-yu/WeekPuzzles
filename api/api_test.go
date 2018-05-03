@@ -1,16 +1,24 @@
 package api
 
 import (
-	"calcuate/saturday"
 	"testing"
 	"fmt"
+	"WeekPuzzles/saturday"
 )
 
 func TestApiToServer(t *testing.T) {
-	sa := &saturday.Saturday{
-		Date:"20180428",
+	sas := make(saturday.Saturdays, 0, 2)
+
+	sa1 := saturday.Saturday{
+		Date: "20180428",
 	}
 
-		ApiToServer(sa)
-		fmt.Println(sa)
+	sa2 := saturday.Saturday{
+		Date: "20180505",
+	}
+
+	sas = append(sas, sa1, sa2)
+
+	ApiToServer(sas)
+	fmt.Println(sas)
 }
